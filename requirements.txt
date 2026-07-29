@@ -59,6 +59,8 @@ python-dotenv>=1.1.0
 # (requests==2.32.4). Forzar una versión más nueva rompe esa
 # dependencia interna. Se deja que Colab resuelva la suya.
 
+requests==2.32.4
+
 httpx>=0.28
 
 ###############################################################
