@@ -26,8 +26,14 @@ Posteriormente serán reemplazados por los agentes reales.
 
 from __future__ import annotations
 
-from langgraph.graph import END, START, StateGraph
-from state import LinkedinState, ReviewDecision, WorkflowStatus
+from langgraph.graph import StateGraph
+from langgraph.graph import START
+from langgraph.graph import END
+
+from state import LinkedinState
+from state import ReviewDecision
+from state import WorkflowStatus
+
 from tools.logger import LOG
 
 ##########################################################################
@@ -41,7 +47,6 @@ def supervisor_node(
     LOG.agent_start("SUPERVISOR")
 
     state["workflow_status"] = WorkflowStatus.RESEARCH
-    #state.workflow_status = WorkflowStatus.RESEARCH
 
     LOG.agent_finish("SUPERVISOR")
 
@@ -57,8 +62,7 @@ def market_node(
 
     LOG.agent_start("MARKET")
 
-    #state["workflow_status"] = WorkflowStatus.CONTENT_ARCHITECT
-    state.workflow_status = WorkflowStatus.CONTENT_ARCHITECT
+    state["workflow_status"] = WorkflowStatus.CONTENT_ARCHITECT
 
     LOG.agent_finish("MARKET")
 
@@ -74,8 +78,8 @@ def architect_node(
 
     LOG.agent_start("ARCHITECT")
 
-    #state["workflow_status"] = WorkflowStatus.CREATOR
-    state.workflow_status = WorkflowStatus.CREATOR
+    state["workflow_status"] = WorkflowStatus.CREATOR
+
     LOG.agent_finish("ARCHITECT")
 
     return state
@@ -90,8 +94,8 @@ def creator_node(
 
     LOG.agent_start("CREATOR")
 
-    #state["workflow_status"] = WorkflowStatus.SEO
-    state.workflow_status = WorkflowStatus.SEO
+    state["workflow_status"] = WorkflowStatus.SEO
+
     LOG.agent_finish("CREATOR")
 
     return state
@@ -106,8 +110,8 @@ def seo_node(
 
     LOG.agent_start("SEO")
 
-    #state["workflow_status"] = WorkflowStatus.LEGAL
-    state.workflow_status = WorkflowStatus.LEGAL
+    state["workflow_status"] = WorkflowStatus.LEGAL
+
     LOG.agent_finish("SEO")
 
     return state
@@ -122,8 +126,8 @@ def legal_node(
 
     LOG.agent_start("LEGAL")
 
-    #state["workflow_status"] = WorkflowStatus.TECHNICAL
-    state.workflow_status = WorkflowStatus.TECHNICAL
+    state["workflow_status"] = WorkflowStatus.TECHNICAL
+
     LOG.agent_finish("LEGAL")
 
     return state
@@ -138,8 +142,8 @@ def technical_node(
 
     LOG.agent_start("TECHNICAL")
 
-    #state["workflow_status"] = WorkflowStatus.EDITOR
-    state.workflow_status = WorkflowStatus.EDITOR
+    state["workflow_status"] = WorkflowStatus.EDITOR
+
     LOG.agent_finish("TECHNICAL")
 
     return state
@@ -155,10 +159,9 @@ def editor_node(
     LOG.agent_start("EDITOR")
 
     # Simulación temporal
-    #state["decision"] = ReviewDecision.APPROVED
-    state.decision = ReviewDecision.APPROVED
-    #state["workflow_status"] = WorkflowStatus.IMAGE
-    state.workflow_status = WorkflowStatus.IMAGE
+    state["decision"] = ReviewDecision.APPROVED
+    state["workflow_status"] = WorkflowStatus.IMAGE
+
     LOG.agent_finish("EDITOR")
 
     return state
@@ -173,8 +176,8 @@ def image_node(
 
     LOG.agent_start("IMAGE")
 
-    #state["workflow_status"] = WorkflowStatus.PUBLISHER
-    state.workflow_status = WorkflowStatus.PUBLISHER
+    state["workflow_status"] = WorkflowStatus.PUBLISHER
+
     LOG.agent_finish("IMAGE")
 
     return state
@@ -189,8 +192,8 @@ def publisher_node(
 
     LOG.agent_start("PUBLISHER")
 
-    #state["workflow_status"] = WorkflowStatus.FINISHED
-    state.workflow_status = WorkflowStatus.FINISHED
+    state["workflow_status"] = WorkflowStatus.FINISHED
+
     LOG.agent_finish("PUBLISHER")
 
     return state
@@ -236,7 +239,7 @@ def workflow_router(
     """
 
     status = state["workflow_status"]
-    #status = state.workflow_status
+
     if status == WorkflowStatus.RESEARCH:
         return "market"
 
@@ -267,6 +270,9 @@ def workflow_router(
     if status == WorkflowStatus.FINISHED:
         return END
 
+    if status == WorkflowStatus.FAILED:
+        return END
+
     return END
 
 ##########################################################################
@@ -282,8 +288,13 @@ def editor_router(
     """
 
     if state["decision"] == ReviewDecision.APPROVED:
-    #if state.decision == ReviewDecision.APPROVED:
         return "image"
+
+    if state["iteracion"] >= state["max_iteraciones"]:
+        state["workflow_status"] = WorkflowStatus.FAILED
+        return END
+
+    state["iteracion"] += 1
 
     return "creator"
 
@@ -336,10 +347,6 @@ def build_graph():
         workflow_router,
     )
 
-#    workflow.add_conditional_edges(
-#        "creator",
-#        workflow_router,
-#    )
     workflow.add_conditional_edges(
         "creator",
         workflow_router,
@@ -410,4 +417,3 @@ def build_graph():
 ##########################################################################
 
 GRAPH = build_graph()
-
