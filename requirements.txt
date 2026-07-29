@@ -53,8 +53,11 @@ python-dotenv>=1.1.0
 ###############################################################
 # HTTP
 ###############################################################
-
-requests>=2.32
+# NOTA: 'requests' y 'httpx' NO se fijan aquí a propósito.
+# Google Colab ya trae una versión de 'requests' que sus propios
+# paquetes internos (google-colab) requieren de forma exacta
+# (requests==2.32.4). Forzar una versión más nueva rompe esa
+# dependencia interna. Se deja que Colab resuelva la suya.
 
 httpx>=0.28
 
@@ -67,10 +70,10 @@ tavily-python>=0.7
 ###############################################################
 # Manejo de datos
 ###############################################################
-
-pandas>=2.3
-
-numpy>=2.2
+# NOTA: 'pandas' y 'numpy' NO se fijan aquí a propósito.
+# Colab ya trae versiones compatibles con sus librerías GPU
+# (cudf-cu12, dask-cudf-cu12) y con 'numba'. Instalar versiones
+# más nuevas rompe esas dependencias internas del entorno.
 
 ###############################################################
 # Validación
@@ -139,10 +142,10 @@ isort>=6.0
 ###############################################################
 # Jupyter / Colab
 ###############################################################
-
-ipykernel>=6.30
-
-ipywidgets>=8.1
+# NOTA: 'ipykernel' y 'ipywidgets' NO se fijan aquí a propósito.
+# Colab ya trae su propia versión exacta de ipykernel
+# (google-colab requiere ipykernel==6.17.1). Actualizarla puede
+# dejar el runtime inestable o forzar reinicios del entorno.
 
 ###############################################################
 # Futuras ampliaciones
