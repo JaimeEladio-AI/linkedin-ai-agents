@@ -93,7 +93,9 @@ class Settings(BaseModel):
     OLLAMA_TOP_P: float = 0.90
 
     OLLAMA_CONTEXT_WINDOW: int = 8192
-
+    
+    OLLAMA_NUM_GPU: int = -1
+    
     ####################################################################
     # OpenAI
     ####################################################################
